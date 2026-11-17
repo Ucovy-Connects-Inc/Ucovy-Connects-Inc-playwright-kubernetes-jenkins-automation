@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${JOB_NAME}
+  namespace: ${K8S_NAMESPACE}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 7200
+  activeDeadlineSeconds: 1800
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: playwright
+          image: ${IMAGE}
+          imagePullPolicy: Always
+          command: ["sh", "-c"]
+          args: ["npx playwright test --grep \"${TEST_GREP}\""]
+          env:
+            - name: BASE_URL
+              value: "https://www.saucedemo.com"
+            - name: RUN_FAILURE_TEST
+              value: "${RUN_FAILURE_TEST}"
+            - name: CI
+              value: "true"
+          resources:
+            requests: {cpu: 500m, memory: 1Gi}
+            limits: {cpu: '2', memory: 4Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: ["ALL"]}
