@@ -1,0 +1,1 @@
+{"name":"uci-288-k8s-playwright","version":"1.0.0","private":true,"scripts":{"test":"playwright test","test:smoke":"playwright test --grep @smoke","test:negative":"playwright test --grep @intentional-failure"},"devDependencies":{"@playwright/test":"1.56.1","typescript":"^5.7.3"}}
